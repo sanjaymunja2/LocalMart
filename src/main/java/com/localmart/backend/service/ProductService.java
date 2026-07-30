@@ -1,5 +1,6 @@
 package com.localmart.backend.service;
-
+import com.localmart.backend.dto.ProductRequest;
+import com.localmart.backend.dto.ProductResponse;
 import com.localmart.backend.entity.Product;
 import com.localmart.backend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,33 @@ public class ProductService {
 
         productRepository.deleteById(id);
         return true;
+    }
+    public ProductResponse createProduct(ProductRequest request) {
+
+        Product product = new Product();
+
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setQuantity(request.getQuantity());
+
+        Product saved = productRepository.save(product);
+
+        return new ProductResponse(
+                saved.getId(),
+                saved.getName(),
+                saved.getPrice(),
+                saved.getQuantity()
+        );
+    }
+    public List<ProductResponse> getAllProductResponses() {
+
+        return productRepository.findAll()
+                .stream()
+                .map(product -> new ProductResponse(
+                        product.getId(),
+                        product.getName(),
+                        product.getPrice(),
+                        product.getQuantity()))
+                .toList();
     }
 }
