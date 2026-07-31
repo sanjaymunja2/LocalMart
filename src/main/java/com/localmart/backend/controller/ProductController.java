@@ -8,13 +8,21 @@ import org.springframework.data.domain.Page;
 import com.localmart.backend.dto.ProductRequest;
 import com.localmart.backend.dto.ProductResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import com.localmart.backend.service.ProductImageService;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
 @RestController
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductImageService productImageService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductImageService productImageService) {
         this.productService = productService;
+        this.productImageService = productImageService;
     }
 
 
@@ -28,6 +36,7 @@ public class ProductController {
         return productService.getAllProducts(page, size, sortBy, direction);
     }
     @PostMapping("/products")
+    @ResponseStatus(HttpStatus.CREATED)
     public ProductResponse createProduct(
             @Valid @RequestBody ProductRequest request) {
 
@@ -58,9 +67,25 @@ public class ProductController {
         return productService.filterProducts(category, minPrice, maxPrice, keyword);
     }
 
+    @GetMapping("/products/{id}")
+    public ProductResponse getProductById(@PathVariable Long id) {
+        return productService.getProductResponseById(id);
+    }
+
     @GetMapping("/products/category")
     public List<ProductResponse> searchProductsByCategory(@RequestParam String category) {
         return productService.searchProductsByCategory(category);
+    }
+
+    @PostMapping(value = "/products/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ProductResponse uploadProductImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
+        return productService.convertToResponse(productImageService.upload(id, image));
+    }
+
+    @GetMapping("/products/{id}/image")
+    public ResponseEntity<Resource> getProductImage(@PathVariable Long id) {
+        ProductImageService.ImageResource image = productImageService.getImage(id);
+        return ResponseEntity.ok().contentType(image.mediaType()).body(image.resource());
     }
 
 }

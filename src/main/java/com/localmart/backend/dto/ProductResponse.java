@@ -7,16 +7,22 @@ public class ProductResponse {
     private String category;
     private Double price;
     private Integer quantity;
+    private String imageUrl;
 
     public ProductResponse() {
     }
 
     public ProductResponse(Long id, String name, String category, Double price, Integer quantity) {
+        this(id, name, category, price, quantity, null);
+    }
+
+    public ProductResponse(Long id, String name, String category, Double price, Integer quantity, String imageUrl) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.price = price;
         this.quantity = quantity;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
@@ -57,5 +63,13 @@ public class ProductResponse {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

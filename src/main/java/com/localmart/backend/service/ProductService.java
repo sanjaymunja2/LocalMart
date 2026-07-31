@@ -10,6 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +52,12 @@ public class ProductService {
                 .map(this::convertToResponse)
                 .toList();
     }
+
+    public ProductResponse getProductResponseById(Long id) {
+        return productRepository.findById(id)
+                .map(this::convertToResponse)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+    }
     public Page<ProductResponse> getAllProducts(int page, int size, String sortBy, String direction) {
         validateSortBy(sortBy);
         Sort.Direction sortDirection = parseDirection(direction);
@@ -69,14 +77,15 @@ public class ProductService {
                 .map(this::convertToResponse)
                 .toList();
     }
-    private ProductResponse convertToResponse(Product product) {
+    public ProductResponse convertToResponse(Product product) {
 
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
                 product.getCategory(),
                 product.getPrice(),
-                product.getQuantity()
+                product.getQuantity(),
+                product.getImagePath() == null ? null : "/products/" + product.getId() + "/image"
         );
     }
     public List<ProductResponse> filterByPrice(Double minPrice, Double maxPrice) {
