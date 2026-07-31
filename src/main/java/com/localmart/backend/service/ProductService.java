@@ -97,4 +97,11 @@ public class ProductService {
                 product.getQuantity()
         );
     }
+    public List<ProductResponse> filterByPrice(Double minPrice, Double maxPrice) {
+
+        return productRepository.findByPriceBetween(minPrice, maxPrice)
+                .stream()
+                .map(this::convertToResponse)
+                .toList();
+    }
 }
