@@ -5,6 +5,7 @@ import com.localmart.backend.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import com.localmart.backend.dto.ProductRequest;
 import com.localmart.backend.dto.ProductResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,15 +18,15 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/products")
-    public List<ProductResponse> getAllProducts() {
-        return productService.getAllProductResponses();
-    }
-    @GetMapping("/products/{id}")
-    public Product getProductById(@PathVariable Long id) {
-        return productService.getProductById(id);
-    }
 
+    @GetMapping("/products")
+    public Page<ProductResponse> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+
+        return productService.getAllProducts(page, size, sortBy);
+    }
     @PostMapping("/products")
     public ProductResponse createProduct(
             @Valid @RequestBody ProductRequest request) {
@@ -49,5 +50,11 @@ public class ProductController {
         }
 
         return "Product not found";
+    }
+    @GetMapping("/products/search")
+    public List<ProductResponse> searchProducts(
+            @RequestParam String keyword) {
+
+        return productService.searchProducts(keyword);
     }
 }

@@ -4,7 +4,10 @@ import com.localmart.backend.dto.ProductResponse;
 import com.localmart.backend.entity.Product;
 import com.localmart.backend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import java.util.List;
 
 @Service
@@ -68,14 +71,30 @@ public class ProductService {
         );
     }
     public List<ProductResponse> getAllProductResponses() {
-
         return productRepository.findAll()
                 .stream()
-                .map(product -> new ProductResponse(
-                        product.getId(),
-                        product.getName(),
-                        product.getPrice(),
-                        product.getQuantity()))
+                .map(this::convertToResponse)
                 .toList();
+    }
+    public Page<ProductResponse> getAllProducts(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Product> products = productRepository.findAll(pageable);
+
+        return products.map(this::convertToResponse);
+    }
+    public List<ProductResponse> searchProducts(String keyword) {
+
+        return productRepository.findByNameContainingIgnoreCase(keyword)
+                .stream()
+                .map(this::convertToResponse)
+                .toList();
+    }
+    private ProductResponse convertToResponse(Product product) {
+        return new ProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getQuantity()
+        );
     }
 }
