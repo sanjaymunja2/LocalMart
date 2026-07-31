@@ -1,6 +1,9 @@
 package com.localmart.backend.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -15,6 +18,9 @@ public class Product {
     @NotBlank(message = "Product name is required")
     private String name;
 
+    @NotBlank(message = "Category is required")
+    private String category;
+
     @Positive(message = "Price must be greater than 0")
     private Double price;
 
@@ -24,9 +30,10 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String name, Double price, Integer quantity) {
+    public Product(Long id, String name, String category, Double price, Integer quantity) {
         this.id = id;
         this.name = name;
+        this.category = category;
         this.price = price;
         this.quantity = quantity;
     }
@@ -45,6 +52,14 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Double getPrice() {

@@ -9,6 +9,9 @@ public class ProductRequest {
     @NotBlank(message = "Product name is required")
     private String name;
 
+    @NotBlank(message = "Category is required")
+    private String category;
+
     @Positive(message = "Price must be greater than 0")
     private Double price;
 
@@ -18,12 +21,27 @@ public class ProductRequest {
     public ProductRequest() {
     }
 
+    public ProductRequest(String name, String category, Double price, Integer quantity) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Double getPrice() {

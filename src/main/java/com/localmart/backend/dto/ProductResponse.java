@@ -4,15 +4,17 @@ public class ProductResponse {
 
     private Long id;
     private String name;
+    private String category;
     private Double price;
     private Integer quantity;
 
     public ProductResponse() {
     }
 
-    public ProductResponse(Long id, String name, Double price, Integer quantity) {
+    public ProductResponse(Long id, String name, String category, Double price, Integer quantity) {
         this.id = id;
         this.name = name;
+        this.category = category;
         this.price = price;
         this.quantity = quantity;
     }
@@ -31,6 +33,14 @@ public class ProductResponse {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Double getPrice() {

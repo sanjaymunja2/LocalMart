@@ -1,6 +1,5 @@
 package com.localmart.backend.controller;
 import jakarta.validation.Valid;
-import com.localmart.backend.entity.Product;
 import com.localmart.backend.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,9 +22,10 @@ public class ProductController {
     public Page<ProductResponse> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy) {
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
 
-        return productService.getAllProducts(page, size, sortBy);
+        return productService.getAllProducts(page, size, sortBy, direction);
     }
     @PostMapping("/products")
     public ProductResponse createProduct(
@@ -33,23 +33,14 @@ public class ProductController {
 
         return productService.createProduct(request);
     }
+
+
     @PutMapping("/products/{id}")
-    public Product updateProduct(@PathVariable Long id,
-                                 @Valid @RequestBody Product product) {
+    public ProductResponse updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductRequest request) {
 
-        return productService.updateProduct(id, product);
-    }
-
-    @DeleteMapping("/products/{id}")
-    public String deleteProduct(@PathVariable Long id) {
-
-        boolean deleted = productService.deleteProduct(id);
-
-        if (deleted) {
-            return "Product deleted successfully";
-        }
-
-        return "Product not found";
+        return productService.updateProduct(id, request);
     }
     @GetMapping("/products/search")
     public List<ProductResponse> searchProducts(
@@ -58,11 +49,18 @@ public class ProductController {
         return productService.searchProducts(keyword);
     }
     @GetMapping("/products/filter")
-    public List<ProductResponse> filterByPrice(
-            @RequestParam Double minPrice,
-            @RequestParam Double maxPrice) {
+    public List<ProductResponse> filterProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String keyword) {
 
-        return productService.filterByPrice(minPrice, maxPrice);
+        return productService.filterProducts(category, minPrice, maxPrice, keyword);
+    }
+
+    @GetMapping("/products/category")
+    public List<ProductResponse> searchProductsByCategory(@RequestParam String category) {
+        return productService.searchProductsByCategory(category);
     }
 
 }
